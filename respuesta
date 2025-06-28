@@ -1,0 +1,137 @@
+versión de Gretl 2025b
+Sesión actual: 2025-06-28 03:46
+
+# === Preparación de datos ===
+? clear  # Limpia cualquier conjunto de datos previoAdd commentMore actions
+? nulldata 1000  # Crea 1000 observaciones en Gretl
+# === Generación de ingresos simulados ===
+? scalar media_ingreso = 1750  # Media esperada de ingresos
+? scalar desvio_ingreso = 500  # Variabilidad esperada
+? series ingresos_sim = 
+ 
+# === Cálculo de tamaño muestral con error proporcional ===
+? scalar Z = 1.96    # Nivel de confianza del 95%
+? scalar media_sim = mean(ingresos_sim)
+? scalar E = 0.05 * media_sim  # Margen de error dinámico (5% de la media)
+? scalar sigma_sim =
+# Tamaño muestral sin corrección
+? scalar n_simple = 
+# Tamaño muestral con corrección por población finita
+? scalar N_real = 1000  # Población ajustada
+? scalar n_ajustado = 
+# === Cálculo de intervalos de confianza ===
+? scalar n =   # Tamaño muestral final ajustado
+? scalar x =  # Media de la muestra generada
+? scalar s =   # Desviación estándar de la muestra
+# --- Intervalo SIN corrección por población finita ---
+? scalar E_sin = 
+? scalar inf_sin =
+? scalar sup_sin = 
+# --- Intervalo CON corrección por población finita ---
+? scalar f = 
+? scalar E_con = 
+? scalar inf_con = 
+? scalar sup_con = 
+# === Cálculo de límites poblacionales ===
+? scalar inf_pobl_sin =
+? scalar sup_pobl_sin =
+? scalar inf_pobl_con =
+? scalar sup_pobl_con = 
+# === Prueba de hipótesis para la media ===
+? scalar mu = 1700  # Valor poblacional de referencia
+? scalar Z_obs = 
+? scalar Z_critico = Z
+# === Mostrar resultados ===
+
+📊 Tamaño muestral y error proporcional
+Margen de error dinámico (5% de la media): 86.06
+Tamaño muestral sin corrección: 124.84
+Tamaño muestral con corrección finita: 110.00
+
+➡ Intervalos de confianza:
+Sin corrección: [1629.51, 1812.87]
+Con corrección: [1634.70, 1807.68]
+
+✅ Límites poblacionales estimados:
+Sin corrección: [1629.51, 1812.87]
+Con corrección: [1634.70, 1807.68]
+
+📌 Prueba de hipótesis para la media poblacional
+H0: Media poblacional = 1700.00
+Media muestral: 1721.19
+Estadístico de prueba Z: 0.45
+Valor crítico: ±1.96
+? if abs(Z_obs) > Z_critico
+? else
+
+✅ No hay suficiente evidencia para rechazar H0. La media podría ser 1700.00.
+? endif
+? series X1 = normal
+? series X2 = uniform
+? series X3 = normal
+# Transformar ingresos en categorías discretas para Poisson
+? series ingresos_cat =  # Agrupamos en intervalos de \
+  500
+# Aplicar regresión de Poisson
+? poisson ingresos_cat const X1 X2 X3
+Se alcanzó la convergencia después de 3 iteraciones
+
+Modelo 1: Poisson, usando las observaciones 1-1000
+Variable dependiente: ingresos_cat
+Desviaciones típicas basadas en el Hessiano
+
+             coeficiente   Desv. típica      z       valor p 
+  -----------------------------------------------------------
+  const       1.36282       0.0515676     26.43     6.55e-154 ***
+  X1          0.00169999    0.0165630      0.1026   0.9183   
+  X2         −0.00124870    0.00549216    −0.2274   0.8201   
+  X3          0.00222669    0.00805305     0.2765   0.7822   
+
+Media de la vble. dep.  3.926000   D.T. de la vble. dep.   1.033243
+Suma de cuad. residuos  1065.963   D.T. de la regresión    1.034526
+R-cuadrado de McFadden  0.000041   R-cuadrado corregido   -0.002249
+Chi-cuadrado(3)         0.142615   valor p                 0.986273
+Log-verosimilitud      −1746.991   Criterio de Akaike      3501.982
+Criterio de Schwarz     3521.613   Crit. de Hannan-Quinn   3509.443
+
+Contraste de sobredispersión: Chi-cuadrado(1) = 776.011 [0.0000]
+
+# Configuración sin borrar datos
+Se alcanzó la convergencia después de 3 iteraciones
+
+Modelo 2: Poisson, usando las observaciones 1-1000
+Variable dependiente: ingresos_cat
+Desviaciones típicas basadas en el Hessiano
+
+             coeficiente   Desv. típica      z       valor p 
+  -----------------------------------------------------------
+  const       1.36282       0.0515676     26.43     6.55e-154 ***
+  X1          0.00169999    0.0165630      0.1026   0.9183   
+  X2         −0.00124870    0.00549216    −0.2274   0.8201   
+  X3          0.00222669    0.00805305     0.2765   0.7822   
+
+Media de la vble. dep.  3.926000   D.T. de la vble. dep.   1.033243
+Suma de cuad. residuos  1065.963   D.T. de la regresión    1.034526
+R-cuadrado de McFadden  0.000041   R-cuadrado corregido   -0.002249
+Chi-cuadrado(3)         0.142615   valor p                 0.986273
+Log-verosimilitud      −1746.991   Criterio de Akaike      3501.982
+Criterio de Schwarz     3521.613   Crit. de Hannan-Quinn   3509.443
+
+Contraste de sobredispersión: Chi-cuadrado(1) = 776.011 [0.0000]
+
+📊 **Estimaciones finales Bayesianas:**
+Variable dependiente: ingresos_cat
+Desviaciones típicas basadas en muestreo Gibbs
+-----------------------------------------------------------
+             Coeficiente   Desv. típica
+-----------------------------------------------------------
+  Const      27066.50390       15117.31625
+  X1         -0.35780       15.94527
+  X2         5.64810       15.47893
+  X3         4.66915       15.71195
+-----------------------------------------------------------
+
+📌 **Estadísticas del ajuste Bayesiano:**
+Media de la vble. dep.   4.03100
+D.T. de la vble. dep.    1.03494
+Criterio de Akaike       54152.92670
